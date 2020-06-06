@@ -9,7 +9,7 @@
                 <li v-for="(day, dayIndex) in week" :key="dayIndex">{{ day }}</li>
             </ul>
         </div>
-        <ul class="week" v-for="(week, weekIndex) in currentMonth.month" :key="weekIndex">
+        <ul class="week" v-for="(week, weekIndex) in currentMonth.weeks" :key="weekIndex">
             <li
                 v-for="(day, dayIndex) in week"
                 :key="dayIndex"
@@ -21,36 +21,28 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
-import {
-  MonthOfTheYear,
-  Month
-} from "@/components/datePicker/datePickerViewModel.ts";
+import { MonthOfTheYear } from "@/components/datePicker/datePickerViewModel.ts";
 
 @Component({})
 export default class DatePicker extends Vue {
   @Prop() private msg!: string;
   private currentMonth = {};
   private week: string[] = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Sa"];
-  private currMonth = 5; //zero based
-  private i = 0;
-  private years = 0;
+  private currMonth = new Date().getMonth(); //zero based
+  private year = 2020;
 
   private created() {
     this.currentMonth = new MonthOfTheYear(this.currMonth, 2020);
   }
 
   private nextMonth() {
-    if (this.currMonth + this.i < 11) {
-      this.i += 1;
+    if (this.currMonth < 11) {
+      this.currMonth += 1;
     } else {
-      this.years += 1;
+      this.year += 1;
       this.currMonth = 0;
-      this.i = 0;
     }
-    (this.currentMonth as Month).createMonth(
-      this.currMonth + this.i,
-      2020 + this.years
-    );
+    this.currentMonth = new MonthOfTheYear(this.currMonth, this.year);
   }
 
   private dateToDayNumber(date: Date | number) {
@@ -58,7 +50,6 @@ export default class DatePicker extends Vue {
     const currDate = isDate ? new Date(date) : date;
     return isDate ? (currDate as Date).getDate() : currDate;
   }
-
   private today(date: Date) {
     const d = new Date();
     return d.isToday(date);
