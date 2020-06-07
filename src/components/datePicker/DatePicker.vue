@@ -66,8 +66,8 @@ export default class DatePicker extends Vue {
   ];
   private currMonth = new Date().getMonth(); //zero based
   private currYear = new Date().getFullYear();
-  private startDay: Date | null = null;
-  private endDay: Date | null = null;
+  private startDate: Date | null = null;
+  private endDate: Date | null = null;
 
   private created() {
     this.months = [
@@ -145,43 +145,38 @@ export default class DatePicker extends Vue {
 
   private dayStatus(day: Date) {
     if (typeof day !== "number") {
-      if (this.startDay !== null && day === this.startDay) {
+      if (this.startDate !== null && day === this.startDate) {
         return ["start-day"];
       }
-      if (this.endDay !== null && day.toString() === this.endDay.toString()) {
+      if (this.endDate !== null && day.toString() === this.endDate.toString()) {
         return ["end-day"];
       }
     }
   }
   private handleSelectDay(day: Date) {
-    if (this.startDay === null && this.endDay === null) {
-      this.startDay = day;
-    } else if (this.startDay !== null && this.endDay === null) {
-      const utcStartDate = Date.parse(this.startDay.toDateString());
+    if (this.startDate === null && this.endDate === null) {
+      this.startDate = day;
+    } else if (this.startDate !== null && this.endDate === null) {
+      const utcStartDate = Date.parse(this.startDate.toDateString());
       const utcCurrentDate = Date.parse(day.toDateString());
-      console.log(utcStartDate, utcCurrentDate);
       if (utcCurrentDate < utcStartDate) {
-        this.endDay = this.startDay;
-        this.startDay = day;
+        this.endDate = this.startDate;
+        this.startDate = day;
       } else {
-        this.endDay = day;
+        this.endDate = day;
       }
-    } else if (this.startDay !== null && this.endDay !== null) {
-      this.startDay = day;
-      this.endDay = null;
+    } else if (this.startDate !== null && this.endDate !== null) {
+      this.startDate = day;
+      this.endDate = null;
     }
   }
 
-  private isBetweenSelectedDates(day: Date | string) {
-    if (this.startDay && this.endDay) {
-      const startDate = new Date(this.startDay);
-      const endDate = new Date(this.endDay);
-      const currentDate = new Date(day);
-      if (
-        currentDate.getDate() > startDate.getDate() &&
-        currentDate.getDate() < endDate.getDate() &&
-        currentDate.getMonth() <= endDate.getMonth()
-      ) {
+  private isBetweenSelectedDates(day: Date) {
+    if (this.startDate && this.endDate) {
+      const utcStartDate = Date.parse(this.startDate.toDateString());
+      const utcEndDate = Date.parse(this.endDate.toDateString());
+      const utcCurrentDate = Date.parse(new Date(day).toDateString());
+      if (utcCurrentDate > utcStartDate && utcCurrentDate < utcEndDate) {
         return ["date-interval"];
       }
     }
@@ -235,21 +230,25 @@ h3 {
 .start-day {
     background-color: #c4f0f3;
     border-left: 2px solid #35b4bd;
+    font-weight: bold;
 }
 .end-day {
     background-color: #c4f0f3;
     border-right: 2px solid #35b4bd;
+    font-weight: bold;
 }
 .disabled {
     color: #d3d3d3;
 }
 .day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     padding: 0.4rem;
     width: 100%;
     height: 100%;
 }
 .date-interval {
-    font-weight: bold;
     background-color: #c4f0f3;
     width: 100%;
     height: 100%;
