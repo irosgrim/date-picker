@@ -1,6 +1,8 @@
 <template>
     <div id="app">
-        <DatePicker />
+        <div class="date-picker-container">
+            <DatePicker />
+        </div>
     </div>
 </template>
 
@@ -24,5 +26,9 @@ export default class App extends Vue {}
     text-align: center;
     color: #2c3e50;
     margin-top: 60px;
+}
+.date-picker-container {
+    margin: 1rem auto;
+    max-width: 880px;
 }
 </style>
