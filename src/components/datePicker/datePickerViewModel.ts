@@ -1,11 +1,4 @@
 
-declare global {
-    interface Date {
-        isToday: (date: Date | string) => boolean;
-        isBeforeToday: (date: Date | string) => boolean;
-        isCurrentMonth: (date: Date | string) => boolean;
-    }
-}
 export interface Month {
     weeks: Date[][];
     createMonth: (month: number, year: number) => void;
@@ -13,25 +6,6 @@ export interface Month {
     getWeekByIndex: (index: number) => Date[];
     getNumberOfDays: () => number;
     getDay: (dayIndex: number) => Date | string;
-}
-
-Date.prototype.isBeforeToday = (date: Date) => {
-    const dateToCompareWith = new Date(date);
-    const today = new Date();
-    return dateToCompareWith.setHours(0, 0, 0, 0) < today.setHours(0, 0, 0, 0);
-}
-
-Date.prototype.isToday = (date: Date | string) => {
-    const dateToCompareWith = new Date(date);
-    const today = new Date();
-    return (
-        dateToCompareWith.setHours(0, 0, 0, 0) === today.setHours(0, 0, 0, 0)
-    );
-}
-Date.prototype.isCurrentMonth = (date: Date | string) => {
-    const dateToCompare = new Date(date).getMonth();
-    const thisMonth = new Date().getMonth();
-    return dateToCompare === thisMonth;
 }
 
 export class WeekOfMonth {

@@ -2,7 +2,7 @@
     <div class="date-picker">
         <div class="arrows">
             <div>
-                <div v-if="!isThisMonth(getMonths[0].getDay(15))" @click="previousMonth()">
+                <div v-if="!isCurrentMonth(getMonths[0].getDay(15))" @click="previousMonth()">
                     <img src="././icons/left-arrow.svg" alt />
                 </div>
             </div>
@@ -27,10 +27,7 @@
                         :class="dayStatus(day)"
                         @click="handleSelectDay(day)"
                     >
-                        <div
-                            class="day"
-                            :class="isBetweenSelectedDates(day)"
-                        >{{ dateToDayNumber(day) }}</div>
+                        <div class="day" :class="handleDayStyling(day)">{{ dateToDayNumber(day) }}</div>
                     </li>
                 </ul>
             </div>
@@ -40,10 +37,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
+import { MonthOfTheYear, Month } from "./datePickerViewModel";
 import {
-  MonthOfTheYear,
-  Month
-} from "@/components/datePicker/datePickerViewModel.ts";
+  isBeforeToday,
+  isToday,
+  isCurrentMonth
+} from "./helpers/dateFunctions";
 
 @Component({})
 export default class DatePicker extends Vue {
@@ -112,16 +111,6 @@ export default class DatePicker extends Vue {
     return isDate ? (currDate as Date).getDate() : " ";
   }
 
-  private today(date: Date) {
-    const d = new Date();
-    return d.isToday(date);
-  }
-
-  private beforeToday(date: Date) {
-    const d = new Date();
-    return d.isBeforeToday(date);
-  }
-
   private get getMonths() {
     return this.months;
   }
@@ -131,16 +120,8 @@ export default class DatePicker extends Vue {
     return this.monthNames[d.getMonth()] + " " + d.getFullYear();
   }
 
-  private isThisMonth(date: string) {
-    const dateToCompare = new Date(Date.parse(date));
-    const now = new Date();
-    if (
-      now.getFullYear() === dateToCompare.getFullYear() &&
-      now.getMonth() === dateToCompare.getMonth()
-    ) {
-      return true;
-    }
-    return false;
+  private isCurrentMonth(date: string) {
+    return isCurrentMonth(date);
   }
 
   private dayStatus(day: Date) {
@@ -171,7 +152,13 @@ export default class DatePicker extends Vue {
     }
   }
 
-  private isBetweenSelectedDates(day: Date) {
+  private handleDayStyling(day: Date) {
+    if (isBeforeToday(day)) {
+      return ["before-today"];
+    }
+    if (isToday(day)) {
+      return ["today"];
+    }
     if (this.startDate && this.endDate) {
       const utcStartDate = Date.parse(this.startDate.toDateString());
       const utcEndDate = Date.parse(this.endDate.toDateString());
