@@ -90,13 +90,10 @@ export default class DatePicker extends Vue {
 
   private previousMonth() {
     const now = new Date();
-    if (
-      this.currYear >= now.getFullYear() &&
-      this.currMonth > now.getMonth() &&
-      this.currMonth > 0
-    ) {
+    if (this.currYear >= now.getFullYear()) {
       this.currMonth -= 1;
-    } else {
+    } else if (this.currMonth < 0) {
+      this.currMonth = 11;
       this.currYear -= 1;
     }
     this.months = [
