@@ -18,3 +18,13 @@ export const isCurrentMonth = (date: Date | string) => {
     const thisMonth = new Date();
     return dateToCompare.getMonth() === thisMonth.getMonth() && dateToCompare.getFullYear() === thisMonth.getFullYear();
 }
+
+export const convertDaysToMiliseconds = (d: number) => {
+    return d * 86400000;
+}
+
+export const isSameMonth = (day: Date, dateToCompareWith: Date) => {
+    const d = new Date(day);
+    const dateToBeCompared = new Date(dateToCompareWith);
+    return d.getMonth() === dateToBeCompared.getMonth();
+}

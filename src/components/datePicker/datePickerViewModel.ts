@@ -1,4 +1,4 @@
-
+import { convertDaysToMiliseconds } from './helpers/dateFunctions';
 export interface Month {
     weeks: Date[][];
     createMonth: (month: number, year: number) => void;
@@ -51,9 +51,13 @@ export class MonthOfTheYear implements Month {
         }
         if (weeksOfMonth[0].length < 7) {
             const emptyDays = 7 - weeksOfMonth[0].length;
+            const previousMonthLastDays = [];
+            for (let d = emptyDays; d > 0; d--) {
+                previousMonthLastDays.push(new Date(weeksOfMonth[0][0] - convertDaysToMiliseconds(d)));
+            }
             const originalWeek = [...weeksOfMonth[0]];
             weeksOfMonth[0] = [
-                ...Array.apply(null, Array(emptyDays)).map(Number.prototype.valueOf, 0),
+                ...previousMonthLastDays,
                 ...originalWeek
             ];
         }

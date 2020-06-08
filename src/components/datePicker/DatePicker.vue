@@ -27,7 +27,10 @@
                         :class="dayStatus(day)"
                         @click="handleSelectDay(day)"
                     >
-                        <div class="day" :class="handleDayStyling(day)">{{ dateToDayNumber(day) }}</div>
+                        <div
+                            class="day"
+                            :class="handleDayStyling(day, week[5])"
+                        >{{ dateToDayNumber(day) }}</div>
                     </li>
                 </ul>
             </div>
@@ -41,7 +44,8 @@ import { MonthOfTheYear, Month } from "./datePickerViewModel";
 import {
   isBeforeToday,
   isToday,
-  isCurrentMonth
+  isCurrentMonth,
+  isSameMonth
 } from "./helpers/dateFunctions";
 
 @Component({})
@@ -149,7 +153,7 @@ export default class DatePicker extends Vue {
     }
   }
 
-  private handleDayStyling(day: Date) {
+  private handleDayStyling(day: Date, dayToCompareWith?: Date) {
     if (isBeforeToday(day)) {
       return ["before-today"];
     }
