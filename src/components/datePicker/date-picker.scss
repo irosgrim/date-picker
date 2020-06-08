@@ -32,7 +32,7 @@ h3 {
     }
 }
 .today {
-    background-color: pink;
+    font-weight: bold;
 }
 .arrows {
     display: flex;
@@ -51,6 +51,9 @@ h3 {
     font-weight: bold;
 }
 .disabled {
+    color: #d3d3d3;
+}
+.before-today {
     color: #d3d3d3;
 }
 .day {

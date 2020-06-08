@@ -1,6 +1,6 @@
 import { WeekOfMonth } from '../datePickerViewModel';
 
-describe("Start tests: WeekOfTheMonth", () => {
+describe("SUT: WeekOfTheMonth", () => {
 
     const sut = new WeekOfMonth();
     for (let day = 1; day <= 7; day++) {

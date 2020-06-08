@@ -1,6 +1,6 @@
 import { MonthOfTheYear } from '../datePickerViewModel';
 
-describe("Start tests: MonthOfTheYear", () => {
+describe("SUT: MonthOfTheYear", () => {
     const sut = new MonthOfTheYear(5, 2020);
     it("is defined", () => {
 
