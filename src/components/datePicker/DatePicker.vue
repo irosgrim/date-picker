@@ -160,7 +160,7 @@ export default class DatePicker extends Vue {
       const utcStartDate = Date.parse(this.startDate.toDateString());
       const utcEndDate = Date.parse(this.endDate.toDateString());
       const utcCurrentDate = Date.parse(new Date(day).toDateString());
-      if (utcCurrentDate > utcStartDate && utcCurrentDate < utcEndDate) {
+      if (utcCurrentDate >= utcStartDate && utcCurrentDate <= utcEndDate) {
         return ["date-interval"];
       }
     }
