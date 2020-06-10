@@ -1,25 +1,25 @@
 <template>
     <div class="date-picker">
-        <div class="arrows">
-            <div>
-                <div v-if="!isCurrentMonth(getMonths[0].getDay(15))" @click="previousMonth()">
-                    <img src="././icons/left-arrow.svg" alt />
-                </div>
-            </div>
-            <div>
-                <div @click="nextMonth()">
-                    <img src="././icons/right-arrow.svg" alt />
-                </div>
-            </div>
-        </div>
         <div class="months-container">
             <div class="month" v-for="(month, monthIndex) in getMonths" :key="monthIndex">
-                <h4>{{getMonthName(month.weeks[2][4])}}</h4>
-                <div class="week-header">
+                <div class="arrows">
+                    <div class="arrow-container">
+                        <div v-if="!isCurrentMonth(getMonths[0].getDay(15)) && monthIndex === 0" @click="previousMonth()" class="arrow-icon">
+                            <img src="././icons/arrow.svg" alt class="flip-horizontally"/>
+                        </div>
+                    </div>
+                    <h4>{{getMonthName(month.weeks[2][4])}}</h4>
+                    <div>
+                        <div v-if="monthIndex === getMonths.length - 1" @click="nextMonth()" class="arrow-icon">
+                            <img src="././icons/arrow.svg" alt/>
+                        </div>
+                    </div>
+                </div>
+               <div class="week-header">
                     <ul class="week">
                         <li v-for="(day, dayIndex) in week" :key="dayIndex">{{ day }}</li>
                     </ul>
-                </div>
+               </div>
                 <ul class="week" v-for="(week, weekIndex) in month.weeks" :key="weekIndex">
                     <li
                         v-for="(day, dayIndex) in week"
@@ -41,7 +41,8 @@ import { MonthOfTheYear, Month } from "./datePickerViewModel";
 import {
   isBeforeToday,
   isToday,
-  isCurrentMonth
+  isCurrentMonth,
+  isSameDay
 } from "./helpers/dateFunctions";
 
 @Component({})
@@ -123,46 +124,66 @@ export default class DatePicker extends Vue {
 
   private dayStatus(day: Date) {
     if (typeof day !== "number") {
-      if (this.startDate !== null && day === this.startDate) {
+      if (this.startDate !== null && isSameDay(day,this.startDate)) {
         return ["start-day"];
       }
-      if (this.endDate !== null && day.toString() === this.endDate.toString()) {
+
+      if (this.endDate !== null && isSameDay(day, this.endDate)) {
         return ["end-day"];
       }
+
     }
   }
   private handleSelectDay(day: Date) {
-    if (this.startDate === null && this.endDate === null) {
+    if (this.startDate === null && this.endDate === null  && !isBeforeToday(day)) {
       this.startDate = day;
-    } else if (this.startDate !== null && this.endDate === null) {
+
+    } else if (this.startDate !== null && this.endDate === null  && !isBeforeToday(day)) {
       const utcStartDate = Date.parse(this.startDate.toDateString());
       const utcCurrentDate = Date.parse(day.toDateString());
+
       if (utcCurrentDate < utcStartDate) {
         this.endDate = this.startDate;
         this.startDate = day;
-      } else {
+
+      } else if (utcCurrentDate > utcStartDate) {
         this.endDate = day;
+
+      } else {
+        return;
       }
+
     } else if (this.startDate !== null && this.endDate !== null) {
       this.startDate = day;
       this.endDate = null;
     }
+
   }
 
   private handleDayStyling(day: Date) {
     if (isBeforeToday(day)) {
       return ["before-today"];
     }
-    if (isToday(day)) {
-      return ["today"];
+
+    if(isSameDay(day, this.startDate) && this.endDate && !isSameDay(this.endDate, this.startDate)) {
+      return ["radius-left"];
     }
+
+    if(isSameDay(day, this.endDate)) {
+
+      return ["radius-right"]
+    }
+
     if (this.startDate && this.endDate) {
+      const dateIntervalCssClasses = ["date-interval"];
       const utcStartDate = Date.parse(this.startDate.toDateString());
       const utcEndDate = Date.parse(this.endDate.toDateString());
       const utcCurrentDate = Date.parse(new Date(day).toDateString());
-      if (utcCurrentDate >= utcStartDate && utcCurrentDate <= utcEndDate) {
-        return ["date-interval"];
+
+      if (utcCurrentDate > utcStartDate && utcCurrentDate < utcEndDate) {
+        return dateIntervalCssClasses;
       }
+
     }
   }
 }

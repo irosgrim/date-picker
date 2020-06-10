@@ -29,6 +29,6 @@ export default class App extends Vue {}
 }
 .date-picker-container {
     margin: 1rem auto;
-    max-width: 880px;
+    max-width: 600px;
 }
 </style>
