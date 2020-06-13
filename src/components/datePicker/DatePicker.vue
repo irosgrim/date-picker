@@ -36,7 +36,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { MonthOfTheYear, Month } from "./datePickerViewModel";
 import {
   isBeforeToday,
@@ -49,7 +49,7 @@ import {
 export default class DatePicker extends Vue {
   @Prop() private msg!: string;
   private months: Month[] = [];
-  private week: string[] = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Sa"];
+  private week: string[] = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
   private monthNames: string[] = [
     "January",
     "February",
@@ -68,6 +68,16 @@ export default class DatePicker extends Vue {
   private currYear = new Date().getFullYear();
   private startDate: Date | null = null;
   private endDate: Date | null = null;
+
+  @Watch('startDate')
+  private startDateSelected(newValue: Date) {
+    this.$emit('startDateSelected', newValue)
+  }
+
+  @Watch('endDate')
+  private endDateSelected(newValue: Date) {
+      this.$emit('endDateSelected', newValue)
+  }
 
   private created() {
     this.months = [
