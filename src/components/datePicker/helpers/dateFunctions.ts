@@ -24,3 +24,19 @@ export const isCurrentMonth = (date: Date | string) => {
     const thisMonth = new Date();
     return dateToCompare.getMonth() === thisMonth.getMonth() && dateToCompare.getFullYear() === thisMonth.getFullYear();
 }
+
+export const formatDateToString = (date: Date, monthArr: string[]) => {
+    if (date) {
+        const d = new Date(date);
+        return d.getDate() + ' ' + monthArr[d.getMonth()] + ' ' + d.getFullYear();
+    } else {
+        return null;
+    }
+}
+
+export const addDays = (date: Date, numberOfDays: number) => {
+    const d = Date.parse(date.toDateString());
+    const millisecondsInOneDay = 86400000;
+    const utcDate = d + (millisecondsInOneDay * numberOfDays);
+    return new Date(utcDate);
+}
