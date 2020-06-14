@@ -17,7 +17,7 @@
                 </div>
                <div class="week-header">
                     <ul class="week">
-                        <li v-for="(day, dayIndex) in week" :key="dayIndex">{{ day }}</li>
+                        <li v-for="(day, dayIndex) in options.weekDaysShort" :key="dayIndex">{{ day }}</li>
                     </ul>
                </div>
                 <ul class="week" v-for="(week, weekIndex) in month.weeks" :key="weekIndex">
@@ -40,43 +40,60 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { MonthOfTheYear, Month } from "./datePickerViewModel";
 import {
   isBeforeToday,
-  isToday,
   isCurrentMonth,
-  isSameDay
+  isSameDay,
 } from "./helpers/dateFunctions";
+
+export interface DatePickerOptions {
+    monthNames?: string[];
+    weekDaysShort?: string[];
+}
 
 @Component({})
 export default class DatePicker extends Vue {
-  @Prop() private msg!: string;
+    @Prop({
+    default: () => ({
+        weekDaysShort: [
+            "Mo", 
+            "Tu", 
+            "We", 
+            "Th", 
+            "Fr", 
+            "Sa", 
+            "Su"
+        ],
+        monthNames: [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ]
+    })
+  }) options!: DatePickerOptions;
+  @Prop() dateOne!: Date;
+  @Prop() dateTwo!: Date;
   private months: Month[] = [];
-  private week: string[] = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-  private monthNames: string[] = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December"
-  ];
   private currMonth = new Date().getMonth(); //zero based
   private currYear = new Date().getFullYear();
-  private startDate: Date | null = null;
-  private endDate: Date | null = null;
+  private startDate: Date | null = this.dateOne ||null;
+  private endDate: Date | null = this.dateTwo || null;
 
   @Watch('startDate')
   private startDateSelected(newValue: Date) {
-    this.$emit('startDateSelected', newValue)
+    this.$emit("startDateSelected", newValue)
   }
 
   @Watch('endDate')
   private endDateSelected(newValue: Date) {
-      this.$emit('endDateSelected', newValue)
+      this.$emit("endDateSelected", newValue)
   }
 
   private created() {
@@ -125,7 +142,7 @@ export default class DatePicker extends Vue {
 
   private getMonthName(date: string) {
     const d = new Date(Date.parse(date));
-    return this.monthNames[d.getMonth()] + " " + d.getFullYear();
+    return this.options.monthNames[d.getMonth()] + " " + d.getFullYear();
   }
 
   private isCurrentMonth(date: string) {
