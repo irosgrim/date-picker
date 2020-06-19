@@ -16,9 +16,16 @@
                 :options="datePickerOptions"
                 :dateOne="startDate"
                 :dateTwo="endDate"
+                :confirmByButton="true"
+                :confirmed="confirmDateChosen"
                 @startDateSelected = "(startDateValue) => startDate = startDateValue"
                 @endDateSelected = " (endDateValue) => endDate = endDateValue"
+                @closeDatePicker = "closeDatePicker()"
                 />
+            <div class="btns-container">
+                <div class="btn cursor-pointer" @click="showDatePicker = !showDatePicker">cancel</div>
+                <div class="btn cursor-pointer" @click="confirmDate()">ok</div>
+            </div>
         </div>
     </div>
 </template>
@@ -77,9 +84,19 @@ export default class App extends Vue {
     private showDatePicker = true;
     private startDate: Date | null = new Date();
     private endDate: Date | null = addDays(new Date(), 4);
+    private confirmDateChosen = false;
 
     private formatDate(date: Date) {
         return formatDateToString(date, this.datePickerOptions.monthNamesShort);
+    }
+
+    private confirmDate() {
+        this.confirmDateChosen = true;
+    }
+
+    closeDatePicker() {
+        this.showDatePicker = false;
+        this.confirmDateChosen = false;
     }
 
 }
@@ -114,4 +131,22 @@ export default class App extends Vue {
     border-radius: 4px;
     max-width: 600px;
 }
+
+.btns-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 1rem;
+}
+
+.btn {
+    padding: 0.4rem 0.8rem;
+    border-radius: 3px;
+    margin: 0 0.5rem;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
 </style>

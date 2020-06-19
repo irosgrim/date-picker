@@ -13,7 +13,7 @@ describe("SUT: MonthOfTheYear", () => {
 
     it('returns number of days in the given month', () => {
         const february2021 = new MonthOfTheYear(1, 2021);
-        expect(february2021.getNumberOfDays()).toEqual(28);
+        expect(february2021.getNumberOfDaysInMonth()).toEqual(28);
     })
 
     it('returns the week at specific index', () => {

@@ -4,13 +4,13 @@
             <div class="month" v-for="(month, monthIndex) in getMonths" :key="monthIndex">
                 <div class="arrows">
                     <div class="arrow-container">
-                        <div v-if="!isCurrentMonth(getMonths[0].getDay(15)) && monthIndex === 0" @click="previousMonth()" class="arrow-icon">
+                        <div v-if="!month.isCurrentMonth() && monthIndex === 0" @click="goToPreviousMonth()" class="arrow-icon">
                             <img src="././icons/arrow.svg" alt class="flip-horizontally"/>
                         </div>
                     </div>
-                    <h4>{{getMonthName(month.weeks[2][4])}}</h4>
+                    <h4>{{month.getMonthNameAndYear(options.monthNames)}}</h4>
                     <div>
-                        <div v-if="monthIndex === getMonths.length - 1" @click="nextMonth()" class="arrow-icon">
+                        <div v-if="monthIndex === getMonths.length - 1" @click="goToNextMonth()" class="arrow-icon">
                             <img src="././icons/arrow.svg" alt/>
                         </div>
                     </div>
@@ -80,6 +80,8 @@ export default class DatePicker extends Vue {
   }) options!: DatePickerOptions;
   @Prop() dateOne!: Date;
   @Prop() dateTwo!: Date;
+  @Prop() confirmByButton!: boolean;
+  @Prop() confirmed!: boolean;
   private months: Month[] = [];
   private currMonth = new Date().getMonth(); //zero based
   private currYear = new Date().getFullYear();
@@ -88,12 +90,25 @@ export default class DatePicker extends Vue {
 
   @Watch('startDate')
   private startDateSelected(newValue: Date) {
-    this.$emit("startDateSelected", newValue)
+      if(!this.confirmByButton) {
+          this.$emit("startDateSelected", newValue);
+      }
   }
 
   @Watch('endDate')
   private endDateSelected(newValue: Date) {
-      this.$emit("endDateSelected", newValue)
+      if(!this.confirmByButton) {
+        this.$emit("endDateSelected", newValue);
+      }
+  }
+
+  @Watch('confirmed')
+  private dateWasConfirmed(val: boolean) {
+        if(val === true && this.confirmByButton === true) {
+            this.$emit("startDateSelected", this.startDate);
+            this.$emit("endDateSelected", this.endDate);
+            this.$emit("closeDatePicker");
+        }
   }
 
   private created() {
@@ -103,7 +118,7 @@ export default class DatePicker extends Vue {
     ];
   }
 
-  private nextMonth() {
+  private goToNextMonth() {
     if (this.currMonth < 11) {
       this.currMonth += 1;
     } else {
@@ -116,7 +131,7 @@ export default class DatePicker extends Vue {
     ];
   }
 
-  private previousMonth() {
+  private goToPreviousMonth() {
     const now = new Date();
     if (this.currYear >= now.getFullYear()) {
       this.currMonth -= 1;
@@ -138,11 +153,6 @@ export default class DatePicker extends Vue {
 
   private get getMonths() {
     return this.months;
-  }
-
-  private getMonthName(date: string) {
-    const d = new Date(Date.parse(date));
-    return this.options.monthNames[d.getMonth()] + " " + d.getFullYear();
   }
 
   private isCurrentMonth(date: string) {
