@@ -4,22 +4,33 @@
             <div class="month" v-for="(month, monthIndex) in getMonths" :key="monthIndex">
                 <div class="arrows">
                     <div class="arrow-container">
-                        <div v-if="!month.isCurrentMonth() && monthIndex === 0" @click="goToPreviousMonth()" class="arrow-icon">
-                            <img src="././icons/arrow.svg" alt class="flip-horizontally"/>
+                        <div
+                            v-if="!month.isCurrentMonth() && monthIndex === 0"
+                            @click="goToPreviousMonth()"
+                            class="arrow-icon"
+                        >
+                            <img src="././icons/arrow.svg" alt class="flip-horizontally" />
                         </div>
                     </div>
                     <h4>{{month.getMonthNameAndYear(options.monthNames)}}</h4>
                     <div>
-                        <div v-if="monthIndex === getMonths.length - 1" @click="goToNextMonth()" class="arrow-icon">
-                            <img src="././icons/arrow.svg" alt/>
+                        <div
+                            v-if="monthIndex === getMonths.length - 1"
+                            @click="goToNextMonth()"
+                            class="arrow-icon"
+                        >
+                            <img src="././icons/arrow.svg" alt />
                         </div>
                     </div>
                 </div>
-               <div class="week-header">
+                <div class="week-header">
                     <ul class="week">
-                        <li v-for="(day, dayIndex) in options.weekDaysShort" :key="dayIndex">{{ day }}</li>
+                        <li
+                            v-for="(day, dayIndex) in options.weekDaysShort"
+                            :key="dayIndex"
+                        >{{ day }}</li>
                     </ul>
-               </div>
+                </div>
                 <ul class="week" v-for="(week, weekIndex) in month.weeks" :key="weekIndex">
                     <li
                         v-for="(day, dayIndex) in week"
@@ -41,43 +52,36 @@ import { MonthOfTheYear, Month } from "./datePickerViewModel";
 import {
   isBeforeToday,
   isCurrentMonth,
-  isSameDay,
+  isSameDay
 } from "./helpers/dateFunctions";
 
 export interface DatePickerOptions {
-    monthNames?: string[];
-    weekDaysShort?: string[];
+  monthNames?: string[];
+  weekDaysShort?: string[];
 }
 
 @Component({})
 export default class DatePicker extends Vue {
-    @Prop({
+  @Prop({
     default: () => ({
-        weekDaysShort: [
-            "Mo", 
-            "Tu", 
-            "We", 
-            "Th", 
-            "Fr", 
-            "Sa", 
-            "Su"
-        ],
-        monthNames: [
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-        ]
+      weekDaysShort: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+      monthNames: [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ]
     })
-  }) options!: DatePickerOptions;
+  })
+  options!: DatePickerOptions;
   @Prop() dateOne!: Date;
   @Prop() dateTwo!: Date;
   @Prop() confirmByButton!: boolean;
@@ -85,36 +89,44 @@ export default class DatePicker extends Vue {
   private months: Month[] = [];
   private currMonth = new Date().getMonth(); //zero based
   private currYear = new Date().getFullYear();
-  private startDate: Date | null = this.dateOne ||null;
+  private startDate: Date | null = this.dateOne || null;
   private endDate: Date | null = this.dateTwo || null;
 
-  @Watch('startDate')
+  @Watch("startDate")
   private startDateSelected(newValue: Date) {
-      if(!this.confirmByButton) {
-          this.$emit("startDateSelected", newValue);
-      }
+    if (!this.confirmByButton) {
+      this.$emit("startDateSelected", newValue);
+    }
   }
 
-  @Watch('endDate')
+  @Watch("endDate")
   private endDateSelected(newValue: Date) {
-      if(!this.confirmByButton) {
-        this.$emit("endDateSelected", newValue);
-      }
+    if (!this.confirmByButton) {
+      this.$emit("endDateSelected", newValue);
+    }
   }
 
-  @Watch('confirmed')
+  @Watch("confirmed")
   private dateWasConfirmed(val: boolean) {
-        if(val === true && this.confirmByButton === true) {
-            this.$emit("startDateSelected", this.startDate);
-            this.$emit("endDateSelected", this.endDate);
-            this.$emit("closeDatePicker");
-        }
+    if (val === true && this.confirmByButton === true) {
+      this.$emit("startDateSelected", this.startDate);
+      this.$emit("endDateSelected", this.endDate);
+      this.$emit("closeDatePicker");
+    }
   }
 
   private created() {
+    let month = this.currMonth;
+    let year = this.currYear;
+
+    if (this.startDateSelected) {
+      const d = new Date(this.startDate);
+      month = d.getMonth();
+      year = d.getFullYear();
+    }
     this.months = [
-      new MonthOfTheYear(this.currMonth, this.currYear),
-      new MonthOfTheYear(this.currMonth + 1, this.currYear)
+      new MonthOfTheYear(month, year),
+      new MonthOfTheYear(month + 1, year)
     ];
   }
 
@@ -161,40 +173,42 @@ export default class DatePicker extends Vue {
 
   private dayStatus(day: Date) {
     if (typeof day !== "number") {
-      if (this.startDate !== null && isSameDay(day,this.startDate)) {
+      if (this.startDate !== null && isSameDay(day, this.startDate)) {
         return ["start-day"];
       }
 
       if (this.endDate !== null && isSameDay(day, this.endDate)) {
         return ["end-day"];
       }
-
     }
   }
   private handleSelectDay(day: Date) {
-    if (this.startDate === null && this.endDate === null  && !isBeforeToday(day)) {
+    if (
+      this.startDate === null &&
+      this.endDate === null &&
+      !isBeforeToday(day)
+    ) {
       this.startDate = day;
-
-    } else if (this.startDate !== null && this.endDate === null  && !isBeforeToday(day)) {
+    } else if (
+      this.startDate !== null &&
+      this.endDate === null &&
+      !isBeforeToday(day)
+    ) {
       const utcStartDate = Date.parse(this.startDate.toDateString());
       const utcCurrentDate = Date.parse(day.toDateString());
 
       if (utcCurrentDate < utcStartDate) {
         this.endDate = this.startDate;
         this.startDate = day;
-
       } else if (utcCurrentDate > utcStartDate) {
         this.endDate = day;
-
       } else {
         return;
       }
-
     } else if (this.startDate !== null && this.endDate !== null) {
       this.startDate = day;
       this.endDate = null;
     }
-
   }
 
   private handleDayStyling(day: Date) {
@@ -202,13 +216,16 @@ export default class DatePicker extends Vue {
       return ["before-today"];
     }
 
-    if(isSameDay(day, this.startDate) && this.endDate && !isSameDay(this.endDate, this.startDate)) {
+    if (
+      isSameDay(day, this.startDate) &&
+      this.endDate &&
+      !isSameDay(this.endDate, this.startDate)
+    ) {
       return ["radius-left"];
     }
 
-    if(isSameDay(day, this.endDate)) {
-
-      return ["radius-right"]
+    if (isSameDay(day, this.endDate)) {
+      return ["radius-right"];
     }
 
     if (this.startDate && this.endDate) {
@@ -220,12 +237,11 @@ export default class DatePicker extends Vue {
       if (utcCurrentDate > utcStartDate && utcCurrentDate < utcEndDate) {
         return dateIntervalCssClasses;
       }
-
     }
   }
 }
 </script>
 
 <style lang="scss">
-@import "./date-picker.scss";
+    @import "./date-picker.scss";
 </style>
