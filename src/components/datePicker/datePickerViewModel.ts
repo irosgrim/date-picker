@@ -4,7 +4,7 @@ export interface Month {
     createMonth: (month: number, year: number) => void;
     getWeeksOfTheMonth: () => Date[][];
     getWeekByIndex: (index: number) => Date[];
-    getNumberOfDays: () => number;
+    getNumberOfDaysInMonth: () => number;
     getDay: (dayIndex: number) => Date | string;
 }
 
@@ -30,9 +30,13 @@ export class WeekOfMonth {
 }
 
 export class MonthOfTheYear implements Month {
+    private month: number;
+    private year: number;
     public weeks: Date[][];
     constructor(month, year) {
         this.createMonth(month, year);
+        this.month = month;
+        this.year = year;
     }
     createMonth(month: number, year: number) {
         //zero based month
@@ -72,7 +76,7 @@ export class MonthOfTheYear implements Month {
         return this.weeks[index];
     }
 
-    getNumberOfDays() {
+    getNumberOfDaysInMonth() {
         const monthWithoutEmptyDays = this.weeks.map(week => week.filter(day => typeof day !== 'number'));
         return monthWithoutEmptyDays.reduce((accumulator, currentWeek) => accumulator += currentWeek.length, 0);
     }
@@ -80,6 +84,25 @@ export class MonthOfTheYear implements Month {
     getDay(dayIndex: number) {
         const weeksCopy = [...this.weeks].flat();
         return weeksCopy[dayIndex];
+    }
+
+    getMonthName(arrayOfMonthNamesZeroIndex: string[]) {
+        const d = new Date(this.weeks[2][4]);
+        return arrayOfMonthNamesZeroIndex[d.getMonth()]; //+ " " + d.getFullYear();
+    }
+
+    getYearOfMonth() {
+        return new Date(this.weeks[2][4]).getFullYear();
+    }
+
+    getMonthNameAndYear(arrayOfMonthNamesZeroIndex: string[]) {
+        const d = new Date(this.weeks[2][4]);
+        return arrayOfMonthNamesZeroIndex[d.getMonth()] + " " + d.getFullYear();
+    }
+
+    isCurrentMonth() {
+        const thisDate = new Date();
+        return thisDate.getMonth() === this.month && thisDate.getFullYear() === this.year;
     }
 }
 
