@@ -40,3 +40,11 @@ export const addDays = (date: Date, numberOfDays: number) => {
     const utcDate = d + (millisecondsInOneDay * numberOfDays);
     return new Date(utcDate);
 }
+
+export const getDateAsReadableText = (date: Date) => {
+    if (typeof date !== 'number') {
+        const options = { year: "numeric", month: "long", day: "numeric" }
+        return new Date(date).toLocaleDateString(undefined, options)
+    }
+    return '';
+}
