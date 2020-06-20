@@ -88,7 +88,7 @@ export class MonthOfTheYear implements Month {
 
     getMonthName(arrayOfMonthNamesZeroIndex: string[]) {
         const d = new Date(this.weeks[2][4]);
-        return arrayOfMonthNamesZeroIndex[d.getMonth()]; //+ " " + d.getFullYear();
+        return arrayOfMonthNamesZeroIndex[d.getMonth()];
     }
 
     getYearOfMonth() {
