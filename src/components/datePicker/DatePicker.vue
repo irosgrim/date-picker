@@ -39,7 +39,7 @@
                         @click="handleSelectDay(day)"
                         role="button"
                         :aria-disabled="$isBeforeToday(day)"
-                        :aria-label="handleAriaLabel(day)"
+                        :aria-label="$getDateAsReadableText(day)"
                     >
                         <div class="day" :class="handleDayStyling(day)">{{ dateToDayNumber(day) }}</div>
                     </li>
@@ -240,45 +240,6 @@ export default class DatePicker extends Vue {
       if (utcCurrentDate > utcStartDate && utcCurrentDate < utcEndDate) {
         return dateIntervalCssClasses;
       }
-    }
-  }
-
-  handleAriaLabel(day: Date): string {
-    const utcStartDate = Date.parse(this.startDate.toDateString());
-    const utcEndDate = Date.parse(this.endDate.toDateString());
-    const utcCurrentDate =
-      typeof day !== "number" && Date.parse(day.toDateString());
-    if (
-      typeof day !== "number" &&
-      utcStartDate !== utcCurrentDate &&
-      utcEndDate !== utcCurrentDate
-    ) {
-      return "Choose " + this.$getDateAsReadableText(day);
-    }
-    if (
-      typeof day !== "number" &&
-      utcStartDate === utcCurrentDate &&
-      utcEndDate === utcCurrentDate
-    ) {
-      return (
-        "You chose " +
-        this.$getDateAsReadableText(day) +
-        " as a start and end date"
-      );
-    }
-    if (
-      typeof day !== "number" &&
-      utcStartDate === utcCurrentDate &&
-      utcEndDate !== utcCurrentDate
-    ) {
-      return "You chose " + this.$getDateAsReadableText(day) + " as start date";
-    }
-    if (
-      typeof day !== "number" &&
-      utcStartDate !== utcCurrentDate &&
-      utcEndDate === utcCurrentDate
-    ) {
-      return "You chose " + this.$getDateAsReadableText(day) + " as end date";
     }
   }
 }
