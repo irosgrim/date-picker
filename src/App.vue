@@ -30,12 +30,8 @@
                 @closeDatePicker="closeDatePicker()"
             />
             <div class="btns-container">
-                <div
-                    class="btn cursor-pointer"
-                    @click="showDatePicker = !showDatePicker"
-                    ref="cancel"
-                >cancel</div>
-                <div class="btn cursor-pointer" @click="confirmDate()" ref="ok">ok</div>
+                <div class="btn cursor-pointer" @click="showDatePicker = !showDatePicker">cancel</div>
+                <div class="btn cursor-pointer" @click="confirmDate()">ok</div>
             </div>
         </div>
     </div>
