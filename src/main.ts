@@ -1,10 +1,20 @@
 import Vue from "vue";
 import App from "./App.vue";
+import {
+    isBeforeToday,
+    isCurrentMonth,
+    isSameDay,
+    getDateAsReadableText
+} from "@/components/datePicker/helpers/dateFunctions";
 
 Vue.config.productionTip = false;
 
-let handleOutsideClick
+Vue.prototype.$isBeforeToday = isBeforeToday;
+Vue.prototype.$isCurrentMonth = isCurrentMonth;
+Vue.prototype.$isSameDay = isSameDay;
+Vue.prototype.$getDateAsReadableText = getDateAsReadableText;
 
+let handleOutsideClick;
 Vue.directive('clickOutside', {
     bind(el, binding, vnode) {
         handleOutsideClick = (e) => {
