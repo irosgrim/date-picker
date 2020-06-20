@@ -124,6 +124,8 @@ export default class DatePicker extends Vue {
 
     if (this.startDateSelected) {
       const d = new Date(this.startDate);
+      this.currMonth = d.getMonth();
+      this.currYear = d.getFullYear();
       month = d.getMonth();
       year = d.getFullYear();
     }
@@ -185,6 +187,7 @@ export default class DatePicker extends Vue {
       }
     }
   }
+
   private handleSelectDay(day: Date) {
     if (
       this.startDate === null &&
