@@ -5,7 +5,7 @@
                 <div class="arrows">
                     <div class="arrow-container">
                         <div
-                            v-if="!month.isCurrentMonth() && monthIndex === 0"
+                            v-show="!month.isCurrentMonth() && monthIndex === 0"
                             @click="goToPreviousMonth()"
                             class="arrow-icon"
                         >
@@ -139,26 +139,25 @@ export default class DatePicker extends Vue {
     if (this.currMonth < 11) {
       this.currMonth += 1;
     } else {
-      this.currYear += 1;
-      this.currMonth = 0;
+        this.currMonth = 0;
+        this.currYear += 1;
     }
     this.months = [
-      new MonthOfTheYear(this.currMonth, this.currYear),
-      new MonthOfTheYear(this.currMonth + 1, this.currYear)
+        new MonthOfTheYear(this.currMonth, this.currYear),
+        new MonthOfTheYear(this.currMonth + 1, this.currYear)
     ];
   }
 
   private goToPreviousMonth() {
-    const now = new Date();
-    if (this.currYear >= now.getFullYear()) {
-      this.currMonth -= 1;
-    } else if (this.currMonth < 0) {
-      this.currMonth = 11;
-      this.currYear -= 1;
+    if(this.currMonth > 0) {
+        this.currMonth -= 1;
+    } else {
+        this.currMonth = 11;
+        this.currYear -= 1;
     }
     this.months = [
-      new MonthOfTheYear(this.currMonth, this.currYear),
-      new MonthOfTheYear(this.currMonth + 1, this.currYear)
+        new MonthOfTheYear(this.currMonth, this.currYear),
+        new MonthOfTheYear(this.currMonth + 1, this.currYear)
     ];
   }
 
@@ -189,31 +188,25 @@ export default class DatePicker extends Vue {
   }
 
   private handleSelectDay(day: Date) {
-    if (
-      this.startDate === null &&
-      this.endDate === null &&
-      !isBeforeToday(day)
-    ) {
-      this.startDate = day;
-    } else if (
-      this.startDate !== null &&
-      this.endDate === null &&
-      !isBeforeToday(day)
-    ) {
-      const utcStartDate = Date.parse(this.startDate.toDateString());
-      const utcCurrentDate = Date.parse(day.toDateString());
+    if(!isBeforeToday(day)) {
+        if ( this.startDate === null && this.endDate === null) {
+            this.startDate = day;
+        } else if ( this.startDate !== null && this.endDate === null ) {
+            const utcStartDate = Date.parse(this.startDate.toDateString());
+            const utcCurrentDate = Date.parse(day.toDateString());
 
-      if (utcCurrentDate < utcStartDate) {
-        this.endDate = this.startDate;
-        this.startDate = day;
-      } else if (utcCurrentDate > utcStartDate) {
-        this.endDate = day;
-      } else {
-        return;
-      }
-    } else if (this.startDate !== null && this.endDate !== null) {
-      this.startDate = day;
-      this.endDate = null;
+            if (utcCurrentDate < utcStartDate) {
+                this.endDate = this.startDate;
+                this.startDate = day;
+            } else if (utcCurrentDate > utcStartDate) {
+                this.endDate = day;
+            } else {
+                return;
+            }
+        } else if (this.startDate !== null && this.endDate !== null) {
+            this.startDate = day;
+            this.endDate = null;
+        }
     }
   }
 

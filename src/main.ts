@@ -20,7 +20,6 @@ Vue.directive('clickOutside', {
         handleOutsideClick = (e) => {
             e.stopPropagation();
             const { handler, exclude } = binding.value;
-
             let clickedOnExcludedEl = false;
             exclude.forEach(refName => {
                 if (!clickedOnExcludedEl) {
@@ -30,6 +29,7 @@ Vue.directive('clickOutside', {
             })
 
             if (!el.contains(e.target) && !clickedOnExcludedEl) {
+                console.log('here')
                 vnode.context[handler]();
             }
         }
