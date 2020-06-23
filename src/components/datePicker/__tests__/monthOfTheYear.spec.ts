@@ -33,4 +33,38 @@ describe("SUT: MonthOfTheYear", () => {
         expect(firstWeek).toEqual(testResult);
     })
 
+    it('return the month name as predefined string', () => {
+        const monthNames = ["January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ];
+        expect(sut.getMonthName(monthNames)).toEqual("June");
+    })
+
+    it('return the month name and year as predefined string', () => {
+        const monthNames = ["January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ];
+        expect(sut.getMonthNameAndYear(monthNames)).toEqual("June 2020");
+    })
+
 })
