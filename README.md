@@ -13,4 +13,6 @@ A ZERO dependencies date range picker, made in VUE.
 
 _work in progress_
 
+Next step: Make it WAI-ARIA compliant
+
 ![Date range picker ](date-picker.png)
