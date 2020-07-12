@@ -9,7 +9,7 @@
                             @click="goToPreviousMonth()"
                             class="arrow-icon"
                         >
-                            <img src="././icons/arrow.svg" alt class="flip-horizontally" />
+                            <img src="././icons/chevron.svg" alt class="flip-horizontally" />
                         </div>
                     </div>
                     <h4>{{month.getMonthNameAndYear(options.monthNames)}}</h4>
@@ -19,7 +19,7 @@
                             @click="goToNextMonth()"
                             class="arrow-icon"
                         >
-                            <img src="././icons/arrow.svg" alt />
+                            <img src="././icons/chevron.svg" alt />
                         </div>
                     </div>
                 </div>

@@ -1,12 +1,14 @@
 <template>
     <div id="app">
         <div
-            class="date-button"
+            class="date-picker-toggle-btn cursor-pointer"
             @click="() => showDatePicker = !showDatePicker"
             ref="date-picker-toggle-button"
         >
             <div>{{formatDate(startDate)}}</div>
-            <div v-if="endDate">&rightarrow;</div>
+            <div v-if="endDate" class="date-interval-separator">
+                <img src="@/components/datePicker/icons/arrow.svg" alt="">
+            </div>
             <div>
                 <div v-if="endDate">{{formatDate(endDate)}}</div>
             </div>
@@ -104,6 +106,7 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss">
+
     #app {
         font-family: Avenir, Helvetica, Arial, sans-serif;
         -webkit-font-smoothing: antialiased;
@@ -112,39 +115,49 @@ export default class App extends Vue {
         color: #2c3e50;
         margin-top: 60px;
     }
-    .date-button {
-        max-width: 200px;
+
+    .date-picker-toggle-btn {
+        min-width: 200px;
+        max-width: 240px;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
-        text-align: left;
         border: 1px solid #ababab;
         padding: 0.8rem;
         border-radius: 4px;
         margin: 0 auto;
-        cursor: pointer;
+        .date-interval-separator {
+            height: 16px;
+            width: 20px;
+            margin: 0 4px;
+            img {
+                width: 100%;
+                height: 100%;
+            }
+        }
     }
+
     .date-picker-container {
         margin: 1rem auto;
         box-shadow: 4px 4px 12px 4px rgba(95, 101, 114, 0.25);
         border-radius: 4px;
         max-width: 600px;
-    }
-
-    .btns-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding-bottom: 1rem;
-    }
-
-    .btn {
-        padding: 0.4rem 0.8rem;
-        border-radius: 3px;
-        margin: 0 0.5rem;
+        .btns-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 1rem;
+            .btn {
+                padding: 0.4rem 0.8rem;
+                color: #195d7a;
+                font-weight: bold;
+                margin: 0 0.5rem;
+            }
+        }
     }
 
     .cursor-pointer {
         cursor: pointer;
     }
+
 </style>
