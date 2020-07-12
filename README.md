@@ -1,6 +1,8 @@
 # Date picker / Date range picker
 _inspired by the Airbnb date picker_
 
+_work in progress_
+
 A ZERO dependencies date range picker, made in VUE.
 
 
@@ -11,7 +13,6 @@ A ZERO dependencies date range picker, made in VUE.
 - ?
 - profit
 
-_work in progress_
 
 ### TODO
 
