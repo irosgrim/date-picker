@@ -80,8 +80,12 @@ a {
     background-color: rgba(196, 240, 243, 0.381);
 }
 .arrow-container {
-    min-width: 16px;
-    min-height: 16px;
+    width: 16px;
+    height: 16px;
+    img {
+        width: 100%;
+        height: 100%;
+    }
 }
 .arrow-icon {
     max-height: 1.2rem;
