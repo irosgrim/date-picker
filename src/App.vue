@@ -1,6 +1,7 @@
 <template>
     <div id="app">
-        <div
+        <button
+            type="button"
             class="date-picker-toggle-btn cursor-pointer"
             @click="() => showDatePicker = !showDatePicker"
             ref="date-picker-toggle-button"
@@ -12,7 +13,7 @@
             <div>
                 <div v-if="endDate">{{formatDate(endDate)}}</div>
             </div>
-        </div>
+        </button>
         <div
             class="date-picker-container"
             v-if="showDatePicker"
@@ -32,8 +33,8 @@
                 @closeDatePicker="closeDatePicker()"
             />
             <div class="btns-container">
-                <div class="btn cursor-pointer" @click="showDatePicker = !showDatePicker">cancel</div>
-                <div class="btn cursor-pointer" @click="confirmDate()">ok</div>
+                <button type="button" class="btn cursor-pointer" @click="showDatePicker = !showDatePicker">cancel</button>
+                <button type="button" class="btn cursor-pointer" @click="confirmDate()">ok</button>
             </div>
         </div>
     </div>

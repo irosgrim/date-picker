@@ -4,23 +4,25 @@
             <div class="month" v-for="(month, monthIndex) in getMonths" :key="monthIndex">
                 <div class="arrows">
                     <div class="arrow-container">
-                        <div
+                        <button
+                            type="button"
                             v-show="!month.isCurrentMonth() && monthIndex === 0"
                             @click="goToPreviousMonth()"
                             class="arrow-icon"
                         >
                             <img src="././icons/chevron.svg" alt class="flip-horizontally" />
-                        </div>
+                        </button>
                     </div>
                     <h4>{{month.getMonthNameAndYear(options.monthNames)}}</h4>
                     <div>
-                        <div
+                        <button
+                            type="button"
                             v-if="monthIndex === getMonths.length - 1"
                             @click="goToNextMonth()"
                             class="arrow-icon"
                         >
                             <img src="././icons/chevron.svg" alt />
-                        </div>
+                        </button>
                     </div>
                 </div>
                 <div class="week-header">
@@ -37,11 +39,10 @@
                         :key="dayIndex"
                         :class="dayStatus(day)"
                         @click="handleSelectDay(day)"
-                        role="button"
                         :aria-disabled="$isBeforeToday(day)"
                         :aria-label="$getDateAsReadableText(day)"
                     >
-                        <div class="day" :class="handleDayStyling(day)">{{ dateToDayNumber(day) }}</div>
+                        <button class="day" :class="handleDayStyling(day)" :data-date="day" :id="`cal:${monthIndex}_row:${weekIndex}_col:${dayIndex}`">{{ dateToDayNumber(day) }}</button>
                     </li>
                 </ul>
             </div>
@@ -63,6 +64,15 @@ export interface DatePickerOptions {
   weekDaysShort?: string[];
 }
 
+declare global{
+        interface String {
+            replaceAt(index: number, replacement: string): string;
+        }
+}
+
+String.prototype.replaceAt = function (index: number, replacement: string) {
+        return this.substring(0, index) + replacement + this.substring(index + 1);
+    }
 @Component({})
 export default class DatePicker extends Vue {
   @Prop({
@@ -133,6 +143,114 @@ export default class DatePicker extends Vue {
       new MonthOfTheYear(month, year),
       new MonthOfTheYear(month + 1, year)
     ];
+  }
+
+  private mounted() {
+      document.addEventListener('keydown', this.navigate);
+  }
+
+  private navigate(e: any) {
+      console.log(e.which);
+      const id = e.target.id;
+      switch(e.which) {
+          case 37: // left
+            if(id) {
+                e.target.setAttribute('tabindex', '-1');
+                const index = 16;
+                const currentId = e.target.id;
+                let currValue = parseInt(currentId[index], 10);
+                if(currValue > 0) {
+                    currValue = (parseInt(currentId[index], 10) - 1)
+                    const newValue = currValue.toString();
+                    const newId = currentId.replaceAt(index, newValue);
+                    const next = document.getElementById(newId)
+                    e.target.setAttribute('tabindex', '0');
+                    next.focus();
+                } else {
+                    currValue = 6;
+                    const newValue = currValue.toString();
+                    const newId = currentId.replaceAt(index, newValue);
+                    const next = document.getElementById(newId)
+                    e.target.setAttribute('tabindex', '0');
+                    next.focus();
+                }
+             }
+          break;
+
+         case 38: // up
+             if(id) {
+                e.target.setAttribute('tabindex', '-1');
+                const index = 10;
+                const currentId = e.target.id;
+                let currValue = parseInt(currentId[index], 10);
+                if(currValue > 0) {
+                    currValue = (parseInt(currentId[index], 10) - 1)
+                    const newValue = currValue.toString();
+                    const newId = currentId.replaceAt(index, newValue);
+                    const next = document.getElementById(newId)
+                    e.target.setAttribute('tabindex', '0');
+                    next.focus();
+                } else {
+                    currValue = 4;
+                    const newValue = currValue.toString();
+                    const newId = currentId.replaceAt(index, newValue);
+                    const next = document.getElementById(newId)
+                    e.target.setAttribute('tabindex', '0');
+                    next.focus();
+                }
+             }
+         break;
+
+         case 39: // right
+              if(id) {
+                e.target.setAttribute('tabindex', '-1');
+                const index = 16;
+                const currentId = e.target.id;
+                let currValue = parseInt(currentId[index], 10);
+                if(currValue < 6) {
+                    currValue = (parseInt(currentId[index], 10) + 1)
+                    const newValue = currValue.toString();
+                    const newId = currentId.replaceAt(index, newValue);
+                    const next = document.getElementById(newId)
+                    e.target.setAttribute('tabindex', '0');
+                    next.focus();
+                } else {
+                    currValue = 0;
+                    const newValue = currValue.toString();
+                    const newId = currentId.replaceAt(index, newValue);
+                    const next = document.getElementById(newId)
+                    e.target.setAttribute('tabindex', '0');
+                    next.focus();
+                }
+             }
+         break;
+
+         case 40: // down
+             if(id) {
+                const index = 10;
+                const currentId = e.target.id;
+                let currValue = parseInt(currentId[index], 10);
+                if(currValue < 4) {
+                    currValue = (parseInt(currentId[index], 10) + 1)
+                    const newValue = currValue.toString();
+                    const newId = currentId.replaceAt(index, newValue);
+                    const next = document.getElementById(newId)
+                    e.target.setAttribute('tabindex', '0');
+                    next.focus();
+                } else {
+                    currValue = 0;
+                    const newValue = currValue.toString();
+                    const newId = currentId.replaceAt(index, newValue);
+                    const next = document.getElementById(newId)
+                    e.target.setAttribute('tabindex', '0');
+                    next.focus();
+                }
+             }
+         break;
+
+         default: return; 
+     }
+     e.preventDefault();
   }
 
   private goToNextMonth() {
