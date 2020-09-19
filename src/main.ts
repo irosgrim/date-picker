@@ -43,6 +43,20 @@ Vue.directive('clickOutside', {
     }
 })
 
+Vue.directive('focus', {
+    inserted (element) {
+        element.focus();
+    },
+    update(el, binding) {
+        var value = binding.value;
+        if (value) {
+          Vue.nextTick(function() {
+            el.focus();
+          });
+        }
+    }
+})
+
 new Vue({
     render: h => h(App)
 }).$mount("#app");
