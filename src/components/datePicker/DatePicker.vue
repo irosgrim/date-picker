@@ -38,11 +38,17 @@
                         v-for="(day, dayIndex) in week"
                         :key="dayIndex"
                         :class="dayStatus(day)"
-                        @click="handleSelectDay(day)"
-                        :aria-disabled="$isBeforeToday(day)"
-                        :aria-label="$getDateAsReadableText(day)"
                     >
-                        <button class="day" :class="handleDayStyling(day)" :data-date="day" :id="`cal:${monthIndex}_row:${weekIndex}_col:${dayIndex}`">{{ dateToDayNumber(day) }}</button>
+                        <button 
+                            class="day" 
+                            :class="handleDayStyling(day)" 
+                            :aria-disabled="$isBeforeToday(day)"
+                            :aria-label="$getDateAsReadableText(day)" 
+                            :id="`cal:${monthIndex}_row:${weekIndex}_col:${dayIndex}`"
+                            @click="handleSelectDay(day)"
+                        >
+                            {{ dateToDayNumber(day) }}
+                        </button>
                     </li>
                 </ul>
             </div>

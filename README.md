@@ -16,8 +16,9 @@ A ZERO dependencies date range picker, made in VUE.
 
 ### TODO
 
-- [ ] WAI-ARIA compliant
+- [ ] WAI-ARIA compliant (WIP)
 - [ ] Type in dates
 - [ ] Disable specific dates
+- [*] Navigate with keyboard - (WIP)
 
 ![Date range picker ](date-picker.png)

@@ -5,6 +5,7 @@ button {
     background-color: transparent;
     border: none;
     outline: none;
+    padding: none;
 }
 .months-container {
     display: flex;
@@ -104,8 +105,9 @@ a {
     }
 }
 .arrow-icon {
-    max-height: 1.2rem;
+    height: 1.2rem;
     width: 1.2rem;
+    padding: 0;
     cursor: pointer;
     img {
         width: 100%;

@@ -48,7 +48,7 @@ Vue.directive('focus', {
         element.focus();
     },
     update(el, binding) {
-        var value = binding.value;
+        const value = binding.value;
         if (value) {
           Vue.nextTick(function() {
             el.focus();
