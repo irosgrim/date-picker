@@ -1,5 +1,11 @@
 <template>
     <div id="app">
+        <div>
+            <h3>Disabled dates:</h3>
+            <pre>['2020-09-25', '2020-09-26', '2020-10-04', '2021-01-13']</pre>
+            <h3>Disabled days of week:</h3>
+            <pre>['Mo']</pre>
+        </div>
         <button
             type="button"
             class="date-picker-toggle-btn cursor-pointer"
@@ -28,13 +34,15 @@
                 :dateTwo="endDate"
                 :confirmByButton="true"
                 :confirmed="confirmDateChosen"
+                :disabledDays="['2020-10-15', '2020-10-26', '2020-11-04', '2021-01-13']"
+                :disabledDaysOfWeek="['Mo']"
                 @startDateSelected="(startDateValue) => startDate = startDateValue"
                 @endDateSelected=" (endDateValue) => endDate = endDateValue"
                 @closeDatePicker="closeDatePicker()"
             />
             <div class="btns-container">
-                <button type="button" class="btn cursor-pointer" @click="showDatePicker = !showDatePicker">cancel</button>
-                <button type="button" class="btn cursor-pointer" @click="confirmDate()">ok</button>
+                <button type="button" class="btn cursor-pointer action-btn" @click="showDatePicker = !showDatePicker">cancel</button>
+                <button type="button" class="btn cursor-pointer action-btn" @click="confirmDate()">ok</button>
             </div>
         </div>
     </div>

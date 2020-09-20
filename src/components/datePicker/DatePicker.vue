@@ -8,7 +8,7 @@
                             type="button"
                             v-show="!month.isCurrentMonth() && monthIndex === 0"
                             @click="goToPreviousMonth()"
-                            class="arrow-icon"
+                            class="btn arrow"
                         >
                             <img src="././icons/chevron.svg" alt class="flip-horizontally" />
                         </button>
@@ -19,7 +19,8 @@
                             type="button"
                             v-if="monthIndex === getMonths.length - 1"
                             @click="goToNextMonth()"
-                            class="arrow-icon"
+                            class="btn arrow"
+                            v-focus
                         >
                             <img src="././icons/chevron.svg" alt />
                         </button>
@@ -34,15 +35,17 @@
                     </ul>
                 </div>
                 <ul class="week" v-for="(week, weekIndex) in month.weeks" :key="weekIndex">
-                    <li
-                        v-for="(day, dayIndex) in week"
-                        :key="dayIndex"
-                        :class="dayStatus(day)"
-                        @click="handleSelectDay(day)"
-                        :aria-disabled="$isBeforeToday(day)"
-                        :aria-label="$getDateAsReadableText(day)"
-                    >
-                        <button class="day" :class="handleDayStyling(day)" :data-date="day" :id="`cal:${monthIndex}_row:${weekIndex}_col:${dayIndex}`">{{ dateToDayNumber(day) }}</button>
+                    <li v-for="(day, dayIndex) in week" :key="dayIndex" :class="dayStatus(day)">
+                        <button
+                            class="day"
+                            :class="handleDayStyling(day)"
+                            :aria-disabled="$isBeforeToday(day)"
+                            :aria-label="$getDateAsReadableText(day)"
+                            :id="`cal:${monthIndex}_row:${weekIndex}_col:${dayIndex}`"
+                            @click="handleSelectDay(day, $event)"
+                            :disabled="$isBeforeToday(day) || isDisabledDay(day) || isDisabledDayOfWeek(day)"
+                            :tabindex="day.toString() === dateTwo.toString() ? '0' : '-1'"
+                        >{{ dateToDayNumber(day) }}</button>
                     </li>
                 </ul>
             </div>
@@ -56,23 +59,27 @@ import { MonthOfTheYear, Month } from "./datePickerViewModel";
 import {
   isBeforeToday,
   isCurrentMonth,
-  isSameDay
+  isSameDay,
+  getDate,
+  getDayOfWeek
 } from "./helpers/dateFunctions";
+import { Navigation } from "./helpers/calendarKeyboardNavigation";
 
 export interface DatePickerOptions {
   monthNames?: string[];
   weekDaysShort?: string[];
 }
 
-declare global{
-        interface String {
-            replaceAt(index: number, replacement: string): string;
-        }
+declare global {
+  interface String {
+    replaceAt(index: number, replacement: string): string;
+  }
 }
 
-String.prototype.replaceAt = function (index: number, replacement: string) {
-        return this.substring(0, index) + replacement + this.substring(index + 1);
-    }
+String.prototype.replaceAt = function(index: number, replacement: string) {
+  return this.substring(0, index) + replacement + this.substring(index + 1);
+};
+
 @Component({})
 export default class DatePicker extends Vue {
   @Prop({
@@ -99,6 +106,8 @@ export default class DatePicker extends Vue {
   @Prop() dateTwo!: Date;
   @Prop() confirmByButton!: boolean;
   @Prop() confirmed!: boolean;
+  @Prop() disabledDays!: string[];
+  @Prop() disabledDaysOfWeek!: string[];
   private months: Month[] = [];
   private currMonth = new Date().getMonth(); //zero based
   private currYear = new Date().getFullYear();
@@ -146,136 +155,72 @@ export default class DatePicker extends Vue {
   }
 
   private mounted() {
-      document.addEventListener('keydown', this.navigate);
+    document.addEventListener("keydown", this.navigate);
   }
 
-  private navigate(e: any) {
-      console.log(e.which);
-      const id = e.target.id;
-      switch(e.which) {
-          case 37: // left
-            if(id) {
-                e.target.setAttribute('tabindex', '-1');
-                const index = 16;
-                const currentId = e.target.id;
-                let currValue = parseInt(currentId[index], 10);
-                if(currValue > 0) {
-                    currValue = (parseInt(currentId[index], 10) - 1)
-                    const newValue = currValue.toString();
-                    const newId = currentId.replaceAt(index, newValue);
-                    const next = document.getElementById(newId)
-                    e.target.setAttribute('tabindex', '0');
-                    next.focus();
-                } else {
-                    currValue = 6;
-                    const newValue = currValue.toString();
-                    const newId = currentId.replaceAt(index, newValue);
-                    const next = document.getElementById(newId)
-                    e.target.setAttribute('tabindex', '0');
-                    next.focus();
-                }
-             }
-          break;
+  private beforeDestroy() {
+    document.removeEventListener("keydown", this.navigate);
+  }
 
-         case 38: // up
-             if(id) {
-                e.target.setAttribute('tabindex', '-1');
-                const index = 10;
-                const currentId = e.target.id;
-                let currValue = parseInt(currentId[index], 10);
-                if(currValue > 0) {
-                    currValue = (parseInt(currentId[index], 10) - 1)
-                    const newValue = currValue.toString();
-                    const newId = currentId.replaceAt(index, newValue);
-                    const next = document.getElementById(newId)
-                    e.target.setAttribute('tabindex', '0');
-                    next.focus();
-                } else {
-                    currValue = 4;
-                    const newValue = currValue.toString();
-                    const newId = currentId.replaceAt(index, newValue);
-                    const next = document.getElementById(newId)
-                    e.target.setAttribute('tabindex', '0');
-                    next.focus();
-                }
-             }
-         break;
+  private navigate(e: KeyboardEvent) {
+    const id = (e.target as HTMLButtonElement).id;
+    const goTo = new Navigation(e);
+    switch (e.key) {
+      case "ArrowLeft":
+        if (id) {
+          goTo.previousDay();
+        }
+        break;
 
-         case 39: // right
-              if(id) {
-                e.target.setAttribute('tabindex', '-1');
-                const index = 16;
-                const currentId = e.target.id;
-                let currValue = parseInt(currentId[index], 10);
-                if(currValue < 6) {
-                    currValue = (parseInt(currentId[index], 10) + 1)
-                    const newValue = currValue.toString();
-                    const newId = currentId.replaceAt(index, newValue);
-                    const next = document.getElementById(newId)
-                    e.target.setAttribute('tabindex', '0');
-                    next.focus();
-                } else {
-                    currValue = 0;
-                    const newValue = currValue.toString();
-                    const newId = currentId.replaceAt(index, newValue);
-                    const next = document.getElementById(newId)
-                    e.target.setAttribute('tabindex', '0');
-                    next.focus();
-                }
-             }
-         break;
+      case "ArrowUp":
+        if (id) {
+          goTo.previousWeek();
+        }
+        break;
 
-         case 40: // down
-             if(id) {
-                const index = 10;
-                const currentId = e.target.id;
-                let currValue = parseInt(currentId[index], 10);
-                if(currValue < 4) {
-                    currValue = (parseInt(currentId[index], 10) + 1)
-                    const newValue = currValue.toString();
-                    const newId = currentId.replaceAt(index, newValue);
-                    const next = document.getElementById(newId)
-                    e.target.setAttribute('tabindex', '0');
-                    next.focus();
-                } else {
-                    currValue = 0;
-                    const newValue = currValue.toString();
-                    const newId = currentId.replaceAt(index, newValue);
-                    const next = document.getElementById(newId)
-                    e.target.setAttribute('tabindex', '0');
-                    next.focus();
-                }
-             }
-         break;
+      case "ArrowRight":
+        if (id) {
+          goTo.nextDay();
+        }
+        break;
 
-         default: return; 
-     }
-     e.preventDefault();
+      case "ArrowDown":
+        if (id) {
+          goTo.nextWeek();
+        }
+        break;
+      case "Escape":
+        this.$emit("closeDatePicker");
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
   }
 
   private goToNextMonth() {
     if (this.currMonth < 11) {
       this.currMonth += 1;
     } else {
-        this.currMonth = 0;
-        this.currYear += 1;
+      this.currMonth = 0;
+      this.currYear += 1;
     }
     this.months = [
-        new MonthOfTheYear(this.currMonth, this.currYear),
-        new MonthOfTheYear(this.currMonth + 1, this.currYear)
+      new MonthOfTheYear(this.currMonth, this.currYear),
+      new MonthOfTheYear(this.currMonth + 1, this.currYear)
     ];
   }
 
   private goToPreviousMonth() {
-    if(this.currMonth > 0) {
-        this.currMonth -= 1;
+    if (this.currMonth > 0) {
+      this.currMonth -= 1;
     } else {
-        this.currMonth = 11;
-        this.currYear -= 1;
+      this.currMonth = 11;
+      this.currYear -= 1;
     }
     this.months = [
-        new MonthOfTheYear(this.currMonth, this.currYear),
-        new MonthOfTheYear(this.currMonth + 1, this.currYear)
+      new MonthOfTheYear(this.currMonth, this.currYear),
+      new MonthOfTheYear(this.currMonth + 1, this.currYear)
     ];
   }
 
@@ -305,26 +250,27 @@ export default class DatePicker extends Vue {
     }
   }
 
-  private handleSelectDay(day: Date) {
-    if(!isBeforeToday(day)) {
-        if ( this.startDate === null && this.endDate === null) {
-            this.startDate = day;
-        } else if ( this.startDate !== null && this.endDate === null ) {
-            const utcStartDate = Date.parse(this.startDate.toDateString());
-            const utcCurrentDate = Date.parse(day.toDateString());
+  private handleSelectDay(day: Date, event: Event) {
+    (event.target as HTMLButtonElement).setAttribute("tabindex", "0");
+    if (!isBeforeToday(day)) {
+      if (this.startDate === null && this.endDate === null) {
+        this.startDate = day;
+      } else if (this.startDate !== null && this.endDate === null) {
+        const utcStartDate = Date.parse(this.startDate.toDateString());
+        const utcCurrentDate = Date.parse(day.toDateString());
 
-            if (utcCurrentDate < utcStartDate) {
-                this.endDate = this.startDate;
-                this.startDate = day;
-            } else if (utcCurrentDate > utcStartDate) {
-                this.endDate = day;
-            } else {
-                return;
-            }
-        } else if (this.startDate !== null && this.endDate !== null) {
-            this.startDate = day;
-            this.endDate = null;
+        if (utcCurrentDate < utcStartDate) {
+          this.endDate = this.startDate;
+          this.startDate = day;
+        } else if (utcCurrentDate > utcStartDate) {
+          this.endDate = day;
+        } else {
+          return;
         }
+      } else if (this.startDate !== null && this.endDate !== null) {
+        this.startDate = day;
+        this.endDate = null;
+      }
     }
   }
 
@@ -346,15 +292,33 @@ export default class DatePicker extends Vue {
     }
 
     if (this.startDate && this.endDate) {
-      const dateIntervalCssClasses = ["date-interval"];
       const utcStartDate = Date.parse(this.startDate.toDateString());
       const utcEndDate = Date.parse(this.endDate.toDateString());
       const utcCurrentDate = Date.parse(new Date(day).toDateString());
 
-      if (utcCurrentDate > utcStartDate && utcCurrentDate < utcEndDate) {
-        return dateIntervalCssClasses;
+      if (
+        utcCurrentDate > utcStartDate &&
+        utcCurrentDate < utcEndDate &&
+        !this.isDisabledDay(day) &&
+        !this.isDisabledDayOfWeek(day)
+      ) {
+        return ["date-interval"];
       }
     }
+  }
+
+  isDisabledDay(day: Date): boolean {
+    if (this.disabledDays) {
+      return this.disabledDays.includes(getDate(day));
+    }
+    return false;
+  }
+
+  isDisabledDayOfWeek(day: Date): boolean {
+    if (this.disabledDaysOfWeek) {
+      return this.disabledDaysOfWeek.includes(getDayOfWeek(day));
+    }
+    return false;
   }
 }
 </script>

@@ -4,7 +4,8 @@ import {
     isBeforeToday,
     isCurrentMonth,
     isSameDay,
-    getDateAsReadableText
+    getDateAsReadableText,
+    formatDateToString
 } from "@/components/datePicker/helpers/dateFunctions";
 
 Vue.config.productionTip = false;
@@ -13,6 +14,7 @@ Vue.prototype.$isBeforeToday = isBeforeToday;
 Vue.prototype.$isCurrentMonth = isCurrentMonth;
 Vue.prototype.$isSameDay = isSameDay;
 Vue.prototype.$getDateAsReadableText = getDateAsReadableText;
+Vue.prototype.$formatDateToString = formatDateToString;
 
 let handleOutsideClick;
 Vue.directive('clickOutside', {
@@ -29,7 +31,6 @@ Vue.directive('clickOutside', {
             })
 
             if (!el.contains(e.target) && !clickedOnExcludedEl) {
-                console.log('here')
                 vnode.context[handler]();
             }
         }
@@ -48,7 +49,7 @@ Vue.directive('focus', {
         element.focus();
     },
     update(el, binding) {
-        var value = binding.value;
+        const value = binding.value;
         if (value) {
           Vue.nextTick(function() {
             el.focus();
