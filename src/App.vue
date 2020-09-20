@@ -1,7 +1,7 @@
 <template>
     <div id="app">
-        <div>
-            <h3>Disabled dates:</h3>
+        <div style="max-widht: 320px; overflow-x: scroll;">
+            <h3 style="margin: 0; padding: 0;">Disabled dates:</h3>
             <pre>['2020-09-25', '2020-09-26', '2020-10-04', '2021-01-13']</pre>
             <h3>Disabled days of week:</h3>
             <pre>['Mo']</pre>
@@ -122,7 +122,7 @@ export default class App extends Vue {
         -moz-osx-font-smoothing: grayscale;
         text-align: center;
         color: #2c3e50;
-        margin-top: 60px;
+        margin-top: 10px;
     }
 
     .date-picker-toggle-btn {
