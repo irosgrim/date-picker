@@ -16,10 +16,10 @@ A ZERO dependencies date range picker, made in VUE.
 
 ### TODO
 
-- [*] WAI-ARIA compliant (WIP)
-- [*] Disable specific dates
-- [*] Disable days of week
-- [*] Navigate with keyboard - (WIP)
+- [x] WAI-ARIA compliant (WIP)
+- [x] Disable specific dates
+- [x] Disable days of week
+- [x] Navigate with keyboard - (WIP)
 - [ ] Type in dates
 - [ ] Styling
 - [ ] Be able to customize colors through a config object ( customizing already possible through CSS)
